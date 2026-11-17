@@ -1,0 +1,29 @@
+services:
+  api:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://agentdesk:agentdesk@db:5432/agentdesk
+      REDIS_URL: redis://redis:6379/0
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: agentdesk
+      POSTGRES_PASSWORD: agentdesk
+      POSTGRES_DB: agentdesk
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentdesk"]
+      interval: 2s
+      retries: 15
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      retries: 15

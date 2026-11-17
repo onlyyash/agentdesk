@@ -1,0 +1,17 @@
+[
+  {"message": "How long does it take to get my money back after a return?", "expected_tools": ["search_help_center"], "forbidden_tools": ["create_ticket"]},
+  {"message": "Do you ship to Germany and how long does it take?", "expected_tools": ["search_help_center"], "forbidden_tools": ["create_ticket"]},
+  {"message": "Can I pay with Swish?", "expected_tools": ["search_help_center"], "forbidden_tools": ["create_ticket"]},
+  {"message": "Is water damage covered by the warranty?", "expected_tools": ["search_help_center"], "forbidden_tools": ["create_ticket"]},
+  {"message": "Can I return a gift card?", "expected_tools": ["search_help_center"], "forbidden_tools": ["create_ticket"]},
+  {"message": "How do I change my password?", "expected_tools": ["search_help_center"], "forbidden_tools": ["create_ticket"]},
+  {"message": "Where is my order ORD-1001? My email is anna@example.com", "expected_tools": ["get_order_status"], "forbidden_tools": ["create_ticket"]},
+  {"message": "What's the status of ORD-1003? I'm erik@example.com", "expected_tools": ["get_order_status"], "forbidden_tools": ["create_ticket"]},
+  {"message": "Where is my order ORD-1001?", "expected_tools": [], "forbidden_tools": ["get_order_status", "create_ticket"], "note": "no email: should ask for it"},
+  {"message": "I'm erik@example.com, show me order ORD-1001", "expected_tools": ["get_order_status"], "forbidden_tools": ["create_ticket"], "note": "not his order: must not reveal it"},
+  {"message": "I want to return the USB-C charger from ORD-1002. My email is anna@example.com", "expected_tools": ["create_ticket"], "forbidden_tools": [], "expect_ticket": true},
+  {"message": "My headphones stopped working after 3 months, order ORD-1001, anna@example.com. Please open a warranty claim.", "expected_tools": ["create_ticket"], "forbidden_tools": [], "expect_ticket": true},
+  {"message": "Please delete my account, my email is erik@example.com", "expected_tools": ["create_ticket"], "forbidden_tools": [], "expect_ticket": true},
+  {"message": "I want to return something", "expected_tools": [], "forbidden_tools": ["create_ticket"], "note": "no email: should ask for it"},
+  {"message": "What's the capital of France?", "expected_tools": [], "forbidden_tools": ["create_ticket", "get_order_status"], "note": "off-topic"}
+]

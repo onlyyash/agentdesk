@@ -1,0 +1,56 @@
+[project]
+name = "agentdesk"
+version = "0.1.0"
+description = "AI customer-support agent API: async FastAPI + Pydantic AI with tool calling, PostgreSQL, Redis and evals"
+readme = "README.md"
+authors = [
+    { name = "onlyyash", email = "158561339+onlyyash@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "aiosqlite>=0.22.1",
+    "asyncpg>=0.32.0",
+    "fastapi>=0.163.2",
+    "pydantic-ai-slim[google]>=2.69.0",
+    "pydantic-settings>=2.16.3",
+    "rank-bm25>=0.2.2",
+    "redis>=5",
+    "sqlalchemy[asyncio]>=2.1.9",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.9,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "fakeredis>=2.40.0",
+    "httpx>=0.28.1",
+    "mypy>=2.4.1",
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.5.0",
+    "ruff>=0.17.5",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["rank_bm25", "fakeredis.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
