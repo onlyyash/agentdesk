@@ -24,7 +24,11 @@ HERE = Path(__file__).parent
 
 
 async def run_case(case: dict[str, Any], deps: Deps, model: str) -> dict[str, Any]:
-    result = await support_agent.run(case["message"], deps=deps, model=model)
+    try:
+        result = await support_agent.run(case["message"], deps=deps, model=model, timeout=60)
+    except Exception as exc:  # count a crash or timeout as a failed case, keep going
+        print(f"ERROR {case['message'][:50]}: {type(exc).__name__}", flush=True)
+        return {"message": case["message"], "tools_used": [], "answer": "", "error": repr(exc)}
     used = [
         p.tool_name
         for m in result.new_messages()
@@ -59,6 +63,9 @@ async def main() -> int:
         await engine.dispose()
 
     metrics = ["expected_tools", "no_forbidden_tools", "ticket"]
+    for r in results:
+        for m in metrics:
+            r.setdefault(m, False)
     for r in results:
         mark = "PASS" if all(r[m] for m in metrics) else "FAIL"
         print(f"{mark}  {r['message'][:60]:<60}  tools={r['tools_used']}")

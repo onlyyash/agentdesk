@@ -6,7 +6,7 @@ from typing import Annotated, Any
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field
-from pydantic_ai import AgentRunError, ModelAPIError, ToolCallPart, UserError
+from pydantic_ai import AgentRunError, ModelAPIError, RunTimedOut, ToolCallPart, UserError
 from pydantic_ai.models import Model
 from redis.asyncio import Redis
 from sqlalchemy import select, text
@@ -103,8 +103,15 @@ def create_app(
         deps = Deps(session=session, kb=request.app.state.kb)
         try:
             result = await support_agent.run(
-                message, deps=deps, message_history=history, model=request.app.state.model
+                message,
+                deps=deps,
+                message_history=history,
+                model=request.app.state.model,
+                timeout=settings.agent_timeout_seconds,
             )
+        except RunTimedOut as exc:
+            await session.rollback()
+            raise HTTPException(504, "The assistant took too long to answer. Try again.") from exc
         except (ModelAPIError, AgentRunError) as exc:
             await session.rollback()
             raise HTTPException(502, "The assistant is unavailable right now.") from exc

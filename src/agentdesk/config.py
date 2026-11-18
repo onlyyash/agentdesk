@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     agent_model: str = "google:gemini-3.8-flash"
     kb_dir: Path = ROOT / "data" / "kb"
 
+    agent_timeout_seconds: float = 45
     max_message_chars: int = 2000
     history_max_turns: int = 10
     history_ttl_seconds: int = 60 * 60 * 24
